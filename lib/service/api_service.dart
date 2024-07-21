@@ -13,6 +13,7 @@ class ApiService {
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
+      print(response.body);
       final Map<String, dynamic> jsonResponse = json.decode(response.body);
       final List<dynamic> items = jsonResponse['items']; // Assuming 'items' contains the list of products
 

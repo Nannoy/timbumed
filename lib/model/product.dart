@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 class Product {
   final String imageUrl;
   final String name;
+  final String category;
   final String description;
   final double price;
   final double rating;
-  final double weight;
+  final double grams;
+  final int review;
+  final String vendor;
+  final double availableQuantity;
 
   Product({
     required this.imageUrl,
@@ -12,7 +18,11 @@ class Product {
     required this.description,
     required this.price,
     required this.rating,
-    required this.weight,
+    required this.grams,
+    required this.review,
+    required this.category,
+    required this.vendor,
+    required this.availableQuantity,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -21,6 +31,36 @@ class Product {
     final imageUrl = photos != null && photos.isNotEmpty
         ? photos[0]['url'] as String? ?? ''
         : '';
+
+    // Get the category
+    // final category = json['categories'] as List<dynamic>?;
+    // final productCategory = category != null && category.isNotEmpty
+    //     ? category[0]['name'] as String? ?? 'not specified'
+    //     : 'not specified';
+
+    // Parse the description string as JSON and extract product_description and product_rating
+    final descriptionStr = json['description'] as String? ?? '[]';
+    final descriptionList = jsonDecode(descriptionStr) as List<dynamic>;
+
+    // Extracting values from descriptionList
+    final productDescription = descriptionList.isNotEmpty
+        ? descriptionList[0]['product_description'] as String? ?? ''
+        : 'Not Specified';
+    final productRating = descriptionList.isNotEmpty
+        ? descriptionList[0]['product_rating'] as double? ?? 0.0
+        : 0.0;
+    final productGrams = descriptionList.isNotEmpty
+        ? descriptionList[0]['grams'] as double? ?? 0.0
+        : 0.0;
+    final productReview = descriptionList.isNotEmpty
+        ? descriptionList[0]['reviews'] as int? ?? 0.0
+        : 0.0;
+    final productVendor = descriptionList.isNotEmpty
+        ? descriptionList[0]['vendor'] as String? ?? ''
+        : 'Not Specified';
+    final productCategory = descriptionList.isNotEmpty
+        ? descriptionList[0]['category'] as String? ?? ''
+        : 'Not Specified';
 
     // Extract price from the current_price field
     final currentPrice = json['current_price'] as List<dynamic>?;
@@ -31,10 +71,14 @@ class Product {
     return Product(
       imageUrl: imageUrl,
       name: json['name'] as String? ?? '',
-      description: json['description'] as String? ?? '',
+      description: productDescription,
       price: price,
-      rating: 0.0, // You might need to add this field if available
-      weight: 0.0, // You might need to add this field if available
+      rating: productRating,
+      grams: productGrams,
+      review: productReview.toInt(),
+      category: productCategory,
+      vendor: productVendor,
+      availableQuantity: json['available_quantity'],
     );
   }
 }

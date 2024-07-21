@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timbumed/model/product.dart';
 import 'package:timbumed/view/product_details.dart';
+import 'package:timbumed/widget/rating.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -36,7 +37,7 @@ class ProductCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
-        elevation: 3,
+        elevation: 0.5,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -44,10 +45,13 @@ class ProductCard extends StatelessWidget {
             children: [
               Stack(
                 children: [
-                  Center(
-                    child: Image.network(
-                        'https://api.timbu.cloud/images/${product.imageUrl}',
-                        height: 80, fit: BoxFit.cover),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30.0),
+                    child: Center(
+                      child: Image.network(
+                          'https://api.timbu.cloud/images/${product.imageUrl}',
+                          height: 50, fit: BoxFit.cover),
+                    ),
                   ),
                   Positioned(
                     right: 0,
@@ -55,39 +59,47 @@ class ProductCard extends StatelessWidget {
                     child: IconButton(
                       icon: FaIcon(
                         FontAwesomeIcons.heart,
+                        size: 13,
                         color: isFavorite(product) ? Colors.red : Colors.black,
                       ),
                       onPressed: () {
                         toggleFavorite(product);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text('Item Added to favorites'),
                             duration: Duration(seconds: 2), // Duration for the Snackbar to be visible
                           ),
                         );
-                        },
+                      },
                     ),
                   ),
                 ],
               ),
-              Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              Text(product.description, maxLines: 2, overflow: TextOverflow.ellipsis),
+              Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              Text(product.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 10),),
               Row(
                 children: [
-                  const Text('Niacin', style: TextStyle(color: Colors.grey)),
+                  Text(product.category, style: const TextStyle(color: Colors.grey, fontSize: 10)),
                   const SizedBox(width: 5),
-                  Text('${product.weight} grams', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                              color: Colors.grey
+                          )
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Text('${product.grams} grams', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 8)),
+                      )),
                 ],
               ),
               Row(
                 children: [
-                  const Icon(Icons.star, color: Colors.yellow, size: 16),
-                  const Icon(Icons.star, color: Colors.yellow, size: 16),
-                  const Icon(Icons.star, color: Colors.yellow, size: 16),
-                  const Icon(Icons.star, color: Colors.yellow, size: 16),
-                  const Icon(Icons.star_half, color: Colors.yellow, size: 16),
+                  StarRating(rating: product.rating),
                   const SizedBox(width: 5),
-                  Text('(${product.rating} ratings)', style: const TextStyle(color: Colors.grey)),
+                  Text('(${product.rating} ratings)', style: const TextStyle(color: Colors.grey, fontSize: 10)),
                 ],
               ),
               Row(
@@ -95,7 +107,7 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Text('₦ ${product.price.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
                   IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.cartShopping, color: Colors.black),
+                    icon: const FaIcon(FontAwesomeIcons.cartShopping, color: Colors.black, size: 10,),
                     onPressed: () => addToCart(product),
                   ),
                 ],

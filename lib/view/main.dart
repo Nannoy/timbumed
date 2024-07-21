@@ -7,7 +7,6 @@ import 'package:timbumed/view/cart.dart';
 import 'package:timbumed/view/favourites.dart';
 import 'package:timbumed/view/home.dart';
 import 'package:timbumed/view/profile.dart';
-import 'package:timbumed/view/product_details.dart';
 
 class MainView extends StatefulWidget {
   const MainView({super.key});
@@ -19,8 +18,8 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
-  List<Product> _favoriteItems = [];
-  List<CartItem> _cartItems = [];
+  final List<Product> _favoriteItems = [];
+  final List<CartItem> _cartItems = [];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -82,14 +81,14 @@ class _MainViewState extends State<MainView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-            icon: const FaIcon(FontAwesomeIcons.bars), onPressed: () {}),
-        title: Image.asset('assets/img/logo.png'),
+            icon: const FaIcon(FontAwesomeIcons.bars, size: 15,), onPressed: () {}),
+        title: Image.asset('assets/img/logo.png', height: 10,),
         actions: [
           IconButton(
-              icon: const FaIcon(FontAwesomeIcons.cartShopping),
+              icon: const FaIcon(FontAwesomeIcons.cartShopping, size: 15,),
               onPressed: () {}),
           IconButton(
-              icon: const FaIcon(FontAwesomeIcons.bell), onPressed: () {})
+              icon: const FaIcon(FontAwesomeIcons.bell, size: 15,), onPressed: () {})
         ],
       ),
       body: PageView(
@@ -136,7 +135,7 @@ class _MainViewState extends State<MainView> {
               children: [
                 FaIcon(
                   FontAwesomeIcons.house,
-                  size: 20,
+                  size: 15,
                   color: _selectedIndex == 0 ? Colors.black : Colors.grey,
                 ),
                 RedDot(isSelected: _selectedIndex == 0),
@@ -150,7 +149,7 @@ class _MainViewState extends State<MainView> {
               children: [
                 FaIcon(
                   FontAwesomeIcons.bagShopping,
-                  size: 20,
+                  size: 15,
                   color: _selectedIndex == 1 ? Colors.black : Colors.grey,
                 ),
                 RedDot(isSelected: _selectedIndex == 1),
@@ -164,7 +163,7 @@ class _MainViewState extends State<MainView> {
               children: [
                 FaIcon(
                   FontAwesomeIcons.tableCellsLarge,
-                  size: 20,
+                  size: 15,
                   color: _selectedIndex == 2 ? Colors.black : Colors.grey,
                 ),
                 RedDot(isSelected: _selectedIndex == 2),
@@ -178,7 +177,7 @@ class _MainViewState extends State<MainView> {
               children: [
                 FaIcon(
                   FontAwesomeIcons.heart,
-                  size: 20,
+                  size: 15,
                   color: _selectedIndex == 3 ? Colors.black : Colors.grey,
                 ),
                 RedDot(isSelected: _selectedIndex == 3),
@@ -192,7 +191,7 @@ class _MainViewState extends State<MainView> {
               children: [
                 FaIcon(
                   FontAwesomeIcons.user,
-                  size: 20,
+                  size: 15,
                   color: _selectedIndex == 4 ? Colors.black : Colors.grey,
                 ),
                 RedDot(isSelected: _selectedIndex == 4),

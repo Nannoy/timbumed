@@ -23,11 +23,26 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late Future<List<Product>> _futureProducts;
+  String selectedCategory = 'All'; // State variable for the selected category
+  final List<String> categories = [
+    'All',
+    'Vitamins',
+    'Antibiotics'
+  ]; // List of categories
 
   @override
   void initState() {
     super.initState();
     _futureProducts = ApiService().fetchProducts();
+  }
+
+  List<Product> _filterProducts(List<Product> products) {
+    if (selectedCategory == 'All') {
+      return products;
+    } else {
+      return products.where((product) => product.category == selectedCategory)
+          .toList();
+    }
   }
 
   @override
@@ -40,42 +55,68 @@ class _HomeState extends State<Home> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search for products...',
-                      hintStyle: const TextStyle(color: Colors.grey, fontSize: 12, fontFamily: 'Poppins'),
-                      prefixIcon: const Icon(FontAwesomeIcons.search, color: Colors.grey),
-                      suffixIcon: IconButton(
-                        icon: const Icon(FontAwesomeIcons.filter, color: Colors.grey),
-                        onPressed: () {
-                          // Add your filter action here
-                        },
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(color: Colors.grey),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(color: Colors.blue),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: const BorderSide(color: Colors.grey),
+                  SizedBox(
+                    height: 35,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search for products...',
+                        hintStyle: const TextStyle(color: Colors.grey,
+                            fontSize: 10,
+                            fontFamily: 'Poppins'),
+                        prefixIcon: const Icon(
+                          FontAwesomeIcons.search, color: Colors.grey,
+                          size: 10,),
+                        suffixIcon: IconButton(
+                          icon: const Icon(FontAwesomeIcons.filter,
+                            color: Colors.grey, size: 10,),
+                          onPressed: () {
+                            // Add your filter action here
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.blue),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 25),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Category',
-                        style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold),
+                        style: TextStyle(fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13),
                       ),
-                      Text(
-                        'Vitamins',
-                        style: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.bold, color: AppColor.primaryColor),
+                      DropdownButton<String>(
+                        value: selectedCategory,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedCategory = newValue!;
+                            _futureProducts = ApiService()
+                                .fetchProducts(); // Re-fetch products to apply the new filter
+                          });
+                        },
+                        items: categories.map<DropdownMenuItem<String>>((
+                            String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13)),
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
@@ -84,16 +125,20 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
+                        height: 30,
+                        width: 30,
                         decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
                           color: AppColor.primaryColor.withOpacity(0.3),
                         ),
                         child: IconButton(
-                          icon: const FaIcon(FontAwesomeIcons.tableCellsLarge),
+                          icon: const FaIcon(
+                            FontAwesomeIcons.tableCellsLarge, size: 15,),
                           onPressed: () {},
                         ),
                       ),
                       IconButton(
-                        icon: const FaIcon(FontAwesomeIcons.bars),
+                        icon: const FaIcon(FontAwesomeIcons.bars, size: 15,),
                         onPressed: () {},
                       ),
                     ],
@@ -106,7 +151,14 @@ class _HomeState extends State<Home> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SliverToBoxAdapter(
-                    child: Center(child: CircularProgressIndicator()),
+                    child: Center(child: SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 0.8,
+                        color: AppColor.primaryColor,
+                      ),
+                    )),
                   );
                 } else if (snapshot.hasError) {
                   return SliverToBoxAdapter(
@@ -117,7 +169,7 @@ class _HomeState extends State<Home> {
                     child: Center(child: Text('No products found')),
                   );
                 } else {
-                  final products = snapshot.data!;
+                  final products = _filterProducts(snapshot.data!);
                   return SliverPadding(
                     padding: const EdgeInsets.all(8.0),
                     sliver: SliverGrid(

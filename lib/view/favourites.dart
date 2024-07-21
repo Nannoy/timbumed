@@ -19,6 +19,11 @@ class Favorites extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Favorites', style: TextStyle(fontFamily: 'Poppins', fontSize: 15),),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
       body: favoriteItems.isEmpty
           ? const Center(child: Text('No favorite items.'))
           : GridView.builder(
